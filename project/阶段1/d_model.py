@@ -7,18 +7,10 @@ from collections import *
 from dateutil import *
 import sklearn.metrics
 import sys
-from sklearn.tree import DecisionTreeClassifier as DTC
-
-
-def data_nor(dn_df):
-    minmaxscaler = MinMaxScaler()
-    nor_data = minmaxscaler.fit_transform(dn_df)
-    return pd.DataFrame(nor_data, columns=dn_df.columns)
-
 
 class Model():
     def __init__(self):
-        self.model = DTC(criterion='entropy',max_depth=5)
+        self.model = linear_model.LinearRegression()
 
     def train(self, X, y):
         self.model.fit(X, y)
@@ -44,6 +36,7 @@ if __name__ == '__main__':
     del(test['体检日期'])
     del(test['性别'])
 
+
     # 用中位数填充
     train = train.drop(['id'], axis=1)
     train.fillna(train.median(axis=0), inplace=True)
@@ -57,10 +50,6 @@ if __name__ == '__main__':
 
     test['年龄'].astype(int)
     test['年龄'].value_counts().sort_index().head().plot.bar()
-
-    # 将数据进行规格化
-    train = data_nor(train)
-    test = data_nor(test)
 
     train = train.iloc[:, 1:]
     test = test.iloc[:, 1:]
